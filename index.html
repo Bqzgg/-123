@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الكيمياء</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #1a237e, #283593);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.7;
+        }
+
+        .beaker {
+            width: 40px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            bottom: 10px;
+            left: 10%;
+        }
+
+        .flask {
+            width: 30px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            border-radius: 0 0 15px 15px;
+            top: 10px;
+            right: 15%;
+        }
+
+        .atom {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            top: 30%;
+            left: 20%;
+        }
+
+        .molecule {
+            width: 50px;
+            height: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            bottom: 20%;
+            right: 10%;
+        }
+
+        .page {
+            padding: 30px;
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .question {
+            margin-bottom: 25px;
+            font-size: 20px;
+            line-height: 1.6;
+            color: #1a237e;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            padding: 15px;
+            background-color: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 17px;
+        }
+
+        .option:hover {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-3px);
+        }
+
+        .selected {
+            background-color: #bbdefb;
+            border-color: #2196f3;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, #1a237e, #283593);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        button:disabled {
+            background: #b0bec5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .student-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a237e;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #2196f3;
+            outline: none;
+        }
+
+        .note {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 5px solid #4caf50;
+            font-size: 16px;
+        }
+
+        .team {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .team h3 {
+            color: #1a237e;
+            margin-bottom: 15px;
+        }
+
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .member {
+            padding: 8px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .supervisor {
+            margin-top: 15px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .channels {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        .channels h3 {
+            color: #1a237e;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .channel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .channel {
+            padding: 10px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .channel:hover {
+            background-color: #bbdefb;
+            transform: translateX(5px);
+        }
+
+        .channel a {
+            color: #1565c0;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .channel a:hover {
+            text-decoration: underline;
+        }
+
+        .result-page {
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .score {
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a237e;
+            margin: 20px 0;
+        }
+
+        .grade {
+            font-size: 28px;
+            color: #d32f2f;
+            margin-bottom: 30px;
+        }
+
+        .thanks {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #1a237e, #283593);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-number {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .question {
+                font-size: 18px;
+            }
+            
+            .option {
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .team-members {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>اختبار الكيمياء - الطريقة العلمية</h1>
+            <p>اختبار معرفتك بالطريقة العلمية ومبادئ الكيمياء</p>
+            <div class="floating-shapes">
+                <div class="shape beaker"></div>
+                <div class="shape flask"></div>
+                <div class="shape atom"></div>
+                <div class="shape molecule"></div>
+            </div>
+        </div>
+
+        <!-- الصفحة الأولى - معلومات الطالب -->
+        <div class="page active" id="page-0">
+            <div class="question">معلومات الطالب</div>
+            
+            <div class="student-info">
+                <div class="input-group">
+                    <label for="student-name">اسم الطالب:</label>
+                    <input type="text" id="student-name" placeholder="أدخل اسمك الكامل">
+                </div>
+                
+                <div class="input-group">
+                    <label for="student-class">الفصل:</label>
+                    <select id="student-class">
+                        <option value="">اختر الفصل</option>
+                        <option value="أول 1">أول 1</option>
+                        <option value="أول 2">أول 2</option>
+                        <option value="أول 3">أول 3</option>
+                        <option value="ثاني 1">ثاني 1</option>
+                        <option value="ثاني 2">ثاني 2</option>
+                        <option value="ثاني 3">ثاني 3</option>
+                        <option value="ثالث">ثالث</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>ملاحظة:</strong> الاختبار مكون من ٣٥ سؤال وكل سؤال بدرجة واحدة والوقت ٤٠ دقيقة
+            </div>
+            
+            <div class="navigation">
+                <button id="start-test" disabled>بدء الاختبار</button>
+            </div>
+            
+            <div class="team">
+                <h3>فريق العمل</h3>
+                <div class="team-members">
+                    <div class="member">تميم المالكي</div>
+                    <div class="member">محمد المطاوعه</div>
+                    <div class="member">سلطان العثمان</div>
+                    <div class="member">سعود القحطاني</div>
+                    <div class="member">فراس المسعد</div>
+                    <div class="member">يوسف الغامدي</div>
+                    <div class="member">راكان العنزي</div>
+                </div>
+                <div class="supervisor">تم انشاء هذا الاختبار باشراف استاذ عبدالله حمدي</div>
+            </div>
+        </div>
+
+        <!-- صفحات الأسئلة -->
+        <div class="page" id="page-1">
+            <div class="timer" id="timer">الوقت المتبقي: 40:00</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="question-number">السؤال 1 من 35</div>
+            <div class="question">1. ما المقصود بالطريقة العلمية؟</div>
+            <div class="options">
+                <div class="option" data-value="أ">أ- أسلوب منظم لدراسة الظواهر وحل المشكلات</div>
+                <div class="option" data-value="ب">ب- تخمين يعتمد على الحدس</div>
+                <div class="option" data-value="ج">ج- سرد المعلومات بدون تجربة</div>
+            </div>
+            <div class="navigation">
+                <button class="prev-btn" disabled>السابق</button>
+                <button class="next-btn">التالي</button>
+            </div>
+        </div>
+
+        <!-- الصفحات المتبقية للأسئلة (2-35) -->
+        <!-- سيتم إنشاؤها ديناميكيًا باستخدام JavaScript -->
+
+        <!-- صفحة النتائج -->
+        <div class="page" id="results-page">
+            <div class="result-page">
+                <h2>نتيجة الاختبار</h2>
+                <div class="score" id="final-score">0/35</div>
+                <div class="grade" id="grade"></div>
+                <div class="thanks">
+                    <p>شكرًا لك على إكمال الاختبار</p>
+                    <p>تقديرًا لجهود المشرف</p>
+                    <h3>الأستاذ عبدالله حمدي</h3>
+                </div>
+                
+                <div class="channels">
+                    <h3>قنوات تعليمية مفيدة في الكيمياء</h3>
+                    <div class="channel-list">
+                        <div class="channel"><a href="https://www.youtube.com/user/ChemistryNotesVideos" target="_blank">قناة Chemistry Notes</a></div>
+                        <div class="channel"><a href="https://www.youtube.com/user/periodicvideos" target="_blank">قناة Periodic Videos</a></div>
+                        <div class="channel"><a href="https://www.youtube.com/user/MIT" target="_blank">قناة MIT OpenCourseWare</a></div>
+                        <div class="channel"><a href="https://www.youtube.com/user/khanacademy" target="_blank">قناة Khan Academy</a></div>
+                        <div class="channel"><a href="https://www.youtube.com/user/numberphile" target="_blank">قناة Numberphile (الكيمياء)</a></div>
+                    </div>
+                </div>
+                
+                <div class="team">
+                    <h3>فريق العمل</h3>
+                    <div class="team-members">
+                        <div class="member">تميم المالكي</div>
+                        <div class="member">محمد المطاوعه</div>
+                        <div class="member">سلطان العثمان</div>
+                        <div class="member">سعود القحطاني</div>
+                        <div class="member">فراس المسعد</div>
+                        <div class="member">يوسف الغامدي</div>
+                        <div class="member">راكان العنزي</div>
+                    </div>
+                    <div class="supervisor">تم انشاء هذا الاختبار باشراف استاذ عبدالله حمدي</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تعريف الأسئلة والإجابات الصحيحة
+        const questions = [
+            {
+                question: "1. ما المقصود بالطريقة العلمية؟",
+                options: [
+                    "أ- أسلوب منظم لدراسة الظواهر وحل المشكلات",
+                    "ب- تخمين يعتمد على الحدس",
+                    "ج- سرد المعلومات بدون تجربة"
+                ],
+                correct: "أ"
+            },
+            {
+                question: "2. ما أول خطوة في الطريقة العلمية؟",
+                options: [
+                    "أ- تحليل البيانات",
+                    "ب- تحديد المشكلة أو طرح السؤال",
+                    "ج- وضع الفرضية"
+                ],
+                correct: "ب"
+            },
+            {
+                question: "3. أي من الخطوات التالية تُمثل جزءًا من الطريقة العلمية؟",
+                options: [
+                    "أ- جمع البيانات وتحليلها",
+                    "ب- تجاهل الملاحظات",
+                    "ج- عرض النتائج دون تجربة"
+                ],
+                correct: "أ"
+            },
+            {
+                question: "4. أي مما يلي يهدف إليه استخدام الطريقة العلمية؟",
+                options: [
+                    "أ- إثبات الآراء الشخصية",
+                    "ب- زيادة عدد التجارب فقط",
+                    "ج- الوصول إلى نتائج دقيقة مبنية على أدلة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "5. البيانات التي تُعبّر بالأرقام تُسمى:",
+                options: [
+                    "أ- بيانات وصفية",
+                    "ب- بيانات كمية",
+                    "ج- بيانات عامة"
+                ],
+                correct: "ب"
+            },
+            {
+                question: "6. عندما نصف لون الزهرة أو رائحتها، فإننا نسجل:",
+                options: [
+                    "أ- بيانات كمية",
+                    "ب- بيانات وصفية",
+                    "ج- بيانات تجريبية"
+                ],
+                correct: "ب"
+            },
+            {
+                question: "7. ما الفرق بين الفرضية والنظرية؟",
+                options: [
+                    "أ- الفرضية قانون دائم",
+                    "ب- الفرضية تفسير مبدئي، والنظرية تفسير مدعوم بأدلة",
+                    "ج- النظرية تخمين غير مثبت"
+                ],
+                correct: "ب"
+            },
+            {
+                question: "8. القانون العلمي يختلف عن النظرية بأنه:",
+                options: [
+                    "أ- يفسر سبب حدوث الظاهرة",
+                    "ب- يصف ما يحدث دائماً في الطبيعة",
+                    "ج- يعتمد على الملاحظات فقط"
+                ],
+                correct: "ب"
+            },
+            {
+                question: "9. أي مما يلي يُعد فرضية علمية صحيحة؟",
+                options: [
+                    "أ- \"الماء سائل في درجة الحرارة العادية.\"",
+                    "ب- \"إذا ارتفعت درجة الحرارة، فإن سرعة التفاعل الكيميائي تزداد.\"",
+                    "ج- \"الجاذبية تسحب الأجسام نحو الأرض.\""
+                ],
+                correct: "ب"
+            },
+            {
+                question: "10. المتغير المستقل هو:",
+                options: [
+                    "أ- العامل الذي يقاس في النهاية",
+                    "ب- العامل الذي يبقى ثابتًا",
+                    "ج- العامل الذي يغيّره الباحث أثناء التجربة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "11. المتغير التابع هو:",
+                options: [
+                    "أ- العامل الذي لا يتغير",
+                    "ب- العامل الذي يتم اختياره عشوائيًا",
+                    "ج- العامل الذي يُقاس لمعرفة تأثير التغيرات"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "12. ما المقصود بالمتغيرات الثابتة؟",
+                options: [
+                    "أ- عوامل تتغير باستمرار",
+                    "ب- عوامل يتم قياسها فقط",
+                    "ج- عوامل لا تتغير طوال التجربة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "13. الهدف من التجربة هو:",
+                options: [
+                    "أ- جمع بيانات دون غاية",
+                    "ب- تغيير المتغيرات فقط",
+                    "ج- اختبار الفرضية والتحقق منها"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "14. عند تحليل النتائج، على الباحث أن:",
+                options: [
+                    "أ- يتجاهل القيم غير المتوقعة",
+                    "ب- يعتمد على الحظ",
+                    "ج- يربط النتائج بالفرضية"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "15. أي من الخطوات تأتي بعد التجربة؟",
+                options: [
+                    "أ- تحديد الفرضية",
+                    "ب- طرح السؤال",
+                    "ج- استخلاص النتائج"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "16. ما الهدف من النتائج في التجربة؟",
+                options: [
+                    "أ- حفظ البيانات دون تحليل",
+                    "ب- إعادة التجربة فقط",
+                    "ج- تفسير ما تم ملاحظته وتحديد دلالته"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "17. لماذا يُفضل تكرار التجربة أكثر من مرة؟",
+                options: [
+                    "أ- لتغيير الفرضية",
+                    "ب- لتقليل عدد الملاحظات",
+                    "ج- للتحقق من دقة النتائج"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "18. عندما تقارن بين بيانات تجربتين مختلفتين فإنك تستخدم مهارة:",
+                options: [
+                    "أ- التذكر",
+                    "ب- التخمين",
+                    "ج- التحليل"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "19. إذا لم تؤيد النتائج الفرضية، فإن الخطوة التالية هي:",
+                options: [
+                    "أ- تجاهل البيانات",
+                    "ب- إعلان النتيجة نهائية",
+                    "ج- تعديل الفرضية أو إعادة التجربة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "20. أي من التالي يمثل استخدامًا صحيحًا للطريقة العلمية؟",
+                options: [
+                    "أ- تغيير جميع العوامل في التجربة",
+                    "ب- تسجيل الملاحظات فقط",
+                    "ج- اختبار عامل واحد في كل مرة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "21. البحث العلمي هو:",
+                options: [
+                    "أ- عمل يعتمد على التخمينات",
+                    "ب- تجربة عشوائية",
+                    "ج- عملية منظمة تهدف إلى اكتساب معرفة جديدة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "22. الفرق بين البحث النظري والتطبيقي هو أن:",
+                options: [
+                    "أ- التطبيقي لا يعتمد على التجربة",
+                    "ب- النظري يستخدم مواد كيميائية فقط",
+                    "ج- النظري يهدف إلى الفهم، والتطبيقي لحل المشكلات"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "23. من أمثلة البحث النظري:",
+                options: [
+                    "أ- تطوير دواء جديد",
+                    "ب- اختراع آلة كهربائية",
+                    "ج- دراسة تركيب الذرة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "24. من أمثلة البحث التطبيقي:",
+                options: [
+                    "أ- اكتشاف تركيب الماء",
+                    "ب- دراسة الضوء",
+                    "ج- تطوير علاج للسرطان"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "25. من تعليمات السلامة في المختبر:",
+                options: [
+                    "أ- لمس المواد باليد مباشرة",
+                    "ب- الأكل أثناء التجربة",
+                    "ج- ارتداء المعطف والنظارات الواقية"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "26. عند حدوث تسرب كيميائي في المختبر، يجب:",
+                options: [
+                    "أ- تنظيفه بقطعة قماش",
+                    "ب- تجاهله",
+                    "ج- إخبار المعلم فوراً"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "27. لماذا تُعد السلامة في المختبر مهمة؟",
+                options: [
+                    "أ- لتسريع التجربة",
+                    "ب- لزيادة النتائج",
+                    "ج- لحماية الأفراد والمعدات"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "28. من فوائد دراسة الكيمياء:",
+                options: [
+                    "أ- تقليل الموارد الطبيعية",
+                    "ب- زيادة الحوادث",
+                    "ج- إنتاج أدوية ومواد مفيدة"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "29. كيف ساهمت الكيمياء في حياتنا اليومية؟",
+                options: [
+                    "أ- في تقليل جودة الهواء",
+                    "ب- في الحد من الاكتشافات",
+                    "ج- في صناعة الأدوية والمنظفات والوقود"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "30. ما المقصود بالاكتشافات غير المقصودة؟",
+                options: [
+                    "أ- نتائج خاطئة لا فائدة منها",
+                    "ب- تجارب ناقصة",
+                    "ج- اكتشافات حدثت بالصدفة وأفادت البشرية"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "31. أي من الأمثلة تمثل اكتشافًا غير مقصود؟",
+                options: [
+                    "أ- اكتشاف الذرة",
+                    "ب- اكتشاف الجدول الدوري",
+                    "ج- اكتشاف البنسلين"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "32. تسجيل الملاحظات أثناء التجربة يساعد على:",
+                options: [
+                    "أ- حفظ الوقت فقط",
+                    "ب- زيادة عدد الأخطاء",
+                    "ج- دقة النتائج وتحليلها"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "33. استخدام الرسوم البيانية في عرض البيانات يهدف إلى:",
+                options: [
+                    "أ- تزيين التقرير",
+                    "ب- حفظ الألوان",
+                    "ج- توضيح العلاقات بين المتغيرات بصرياً"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "34. من خصائص الباحث العلمي الجيد:",
+                options: [
+                    "أ- التسرع والعشوائية",
+                    "ب- الاعتماد على الحظ",
+                    "ج- الدقة والموضوعية والصبر"
+                ],
+                correct: "ج"
+            },
+            {
+                question: "35. ما القيمة التي تؤكد عليها أخلاقيات البحث العلمي؟",
+                options: [
+                    "أ- إخفاء الأخطاء",
+                    "ب- تقليد أبحاث الآخرين",
+                    "ج- الأمانة في نقل النتائج وتوثيق المصادر"
+                ],
+                correct: "ج"
+            }
+        ];
+
+        // المتغيرات العامة
+        let currentPage = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timeLeft = 40 * 60; // 40 دقيقة بالثواني
+        let timerInterval;
+
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            // إنشاء صفحات الأسئلة ديناميكيًا
+            createQuestionPages();
+            
+            // إضافة مستمعي الأحداث
+            document.getElementById('student-name').addEventListener('input', validateStartButton);
+            document.getElementById('student-class').addEventListener('change', validateStartButton);
+            document.getElementById('start-test').addEventListener('click', startTest);
+            
+            // بدء المؤقت
+            startTimer();
+        });
+
+        // إنشاء صفحات الأسئلة ديناميكيًا
+        function createQuestionPages() {
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const page = document.createElement('div');
+                page.className = 'page';
+                page.id = `page-${i+1}`;
+                
+                // خلط الخيارات عشوائيًا لتجنب نمط الإجابات الثابت
+                const shuffledOptions = shuffleArray([...question.options]);
+                
+                page.innerHTML = `
+                    <div class="timer" id="timer-${i+1}">الوقت المتبقي: 40:00</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress-${i+1}"></div>
+                    </div>
+                    <div class="question-number">السؤال ${i+1} من ${questions.length}</div>
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${shuffledOptions.map(option => 
+                            `<div class="option" data-value="${option.charAt(0)}">${option}</div>`
+                        ).join('')}
+                    </div>
+                    <div class="navigation">
+                        <button class="prev-btn" ${i === 0 ? 'disabled' : ''}>السابق</button>
+                        <button class="next-btn">${i === questions.length - 1 ? 'إنهاء الاختبار' : 'التالي'}</button>
+                    </div>
+                `;
+                
+                container.insertBefore(page, document.getElementById('results-page'));
+            }
+            
+            // إضافة مستمعي الأحداث للخيارات والأزرار
+            addEventListeners();
+        }
+
+        // خلط مصفوفة عشوائيًا
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // إضافة مستمعي الأحداث
+        function addEventListeners() {
+            // مستمعي الأحداث للخيارات
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // إزالة التحديد من جميع الخيارات في السؤال الحالي
+                    const options = this.parentElement.querySelectorAll('.option');
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // تحديد الخيار المختار
+                    this.classList.add('selected');
+                    
+                    // حفظ الإجابة
+                    const pageIndex = parseInt(this.closest('.page').id.split('-')[1]);
+                    userAnswers[pageIndex - 1] = this.getAttribute('data-value');
+                });
+            });
+            
+            // مستمعي الأحداث لأزرار التنقل
+            document.querySelectorAll('.next-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentPageId = this.closest('.page').id;
+                    const pageIndex = parseInt(currentPageId.split('-')[1]);
+                    
+                    if (pageIndex === questions.length) {
+                        // إذا كانت هذه آخر صفحة، انتقل إلى صفحة النتائج
+                        showResults();
+                    } else {
+                        // الانتقال إلى الصفحة التالية
+                        goToPage(pageIndex + 1);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.prev-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentPageId = this.closest('.page').id;
+                    const pageIndex = parseInt(currentPageId.split('-')[1]);
+                    goToPage(pageIndex - 1);
+                });
+            });
+        }
+
+        // التحقق من صحة بيانات الطالب لتمكين زر البدء
+        function validateStartButton() {
+            const name = document.getElementById('student-name').value.trim();
+            const classVal = document.getElementById('student-class').value;
+            const startButton = document.getElementById('start-test');
+            
+            startButton.disabled = !(name && classVal);
+        }
+
+        // بدء الاختبار
+        function startTest() {
+            goToPage(1);
+        }
+
+        // الانتقال إلى صفحة محددة
+        function goToPage(pageNumber) {
+            // إخفاء الصفحة الحالية
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // إظهار الصفحة المطلوبة
+            document.getElementById(`page-${pageNumber}`).classList.add('active');
+            currentPage = pageNumber;
+            
+            // تحديث شريط التقدم
+            updateProgressBar();
+            
+            // استعادة الإجابة المحددة مسبقًا إن وجدت
+            if (pageNumber > 0 && pageNumber <= questions.length) {
+                const savedAnswer = userAnswers[pageNumber - 1];
+                if (savedAnswer) {
+                    const options = document.querySelectorAll(`#page-${pageNumber} .option`);
+                    options.forEach(option => {
+                        if (option.getAttribute('data-value') === savedAnswer) {
+                            option.classList.add('selected');
+                        }
+                    });
+                }
+            }
+        }
+
+        // تحديث شريط التقدم
+        function updateProgressBar() {
+            const progress = (currentPage / questions.length) * 100;
+            document.querySelectorAll('.progress').forEach(bar => {
+                bar.style.width = `${progress}%`;
+            });
+        }
+
+        // بدء المؤقت
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                
+                // تحديث العداد في جميع الصفحات
+                document.querySelectorAll('.timer').forEach(timer => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timer.textContent = `الوقت المتبقي: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                });
+                
+                // إذا انتهى الوقت، عرض النتائج
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        // عرض النتائج
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            // حساب النتيجة
+            let score = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (userAnswers[i] === questions[i].correct) {
+                    score++;
+                }
+            }
+            
+            // تحديد التقدير
+            let grade = '';
+            const percentage = (score / questions.length) * 100;
+            
+            if (percentage >= 90) {
+                grade = 'ممتاز';
+            } else if (percentage >= 80) {
+                grade = 'جيد جدًا';
+            } else if (percentage >= 70) {
+                grade = 'جيد';
+            } else if (percentage >= 60) {
+                grade = 'مقبول';
+            } else {
+                grade = 'ضعيف';
+            }
+            
+            // عرض النتائج
+            document.getElementById('final-score').textContent = `${score}/${questions.length}`;
+            document.getElementById('grade').textContent = `التقدير: ${grade}`;
+            
+            // الانتقال إلى صفحة النتائج
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('results-page').classList.add('active');
+        }
+    </script>
+</body>
+</html>
